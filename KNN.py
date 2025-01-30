@@ -44,7 +44,7 @@ class KNN():
                     if distances[i] < minimum:
                         minimum = distances
                         minIndex = i
-            important_indices.append(i)
+            important_indices.append(minIndex)
             minimum=super_large_number
 
         ##get the outputs associated with those indices
