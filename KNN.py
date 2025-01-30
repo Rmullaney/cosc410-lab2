@@ -30,6 +30,8 @@ class KNN():
         Returns:
             np.array: Predictions; labels if self.task is classification or values if self.task is regression
         """ 
+
+        ##Find the indices of closest k points
         super_large_number = 1000000000000000000000000000
         assert(self.k < len(self.X))
         distances = util.euclidean_distance(X_test, self.X)
@@ -44,11 +46,21 @@ class KNN():
                         minIndex = i
             important_indices.append(i)
             minimum=super_large_number
-        class_list = []
+
+        ##get the outputs associated with those indices
+        value_list = []
         for i in range(len(important_indices)):
-            class_list.append(self.Y[important_indices[i]])
-        mode = util.mode(class_list)
-        return mode
+            value_list.append(self.Y[important_indices[i]])
+
+        if (self.task == "Classification"):
+            mode = util.mode(value_list)
+            return mode
+        elif (self.task == "Regression"):
+            unweighted_avg = sum(value_list) / len(value_list)
+            return unweighted_avg
+        else:
+            print("Self.task is not a valid task type. Please input Classification or Regression")
+    
 
 
 if __name__ == '__main__':
@@ -60,4 +72,14 @@ if __name__ == '__main__':
 
 
     ## Write test cases using the toy data above (or you can create your own toy data!)
-    my_KNN = KNN()
+
+    ## classfication test
+    my_KNN_classification = KNN("Classification", 3)
+    my_KNN_classification.fit(x, y_labels)
+    print("Classfication Prediction Example: ", my_KNN_classification.predict([2, 2, 4]))
+
+    ## Regression test
+    my_KNN_regression = KNN("Regression", 3)
+    my_KNN_regression.fit(x, y_values)
+    print("Regression Prediction Example: ", my_KNN_regression.predict([2, 2, 4]))
+
