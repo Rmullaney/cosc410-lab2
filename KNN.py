@@ -1,5 +1,7 @@
 import util
 import numpy as np
+from importlib import reload
+reload(util)
 
 class KNN():
     """ K Nearest Neighbors Classifier 
@@ -23,15 +25,13 @@ class KNN():
 
     def predict(self, X_test: np.array) -> np.array:
         """ Makes prediction based on k closest neighbors and classification task
-            Assumes that fitting data is already inputted to self.X and self.Y
+
         Args:
             X_test (np.array): Input test data
 
         Returns:
             np.array: Predictions; labels if self.task is classification or values if self.task is regression
         """ 
-
-        ##Find the indices of closest k points
         super_large_number = 1000000000000000000000000000
         assert(self.k < len(self.X))
         distances = util.euclidean_distance(X_test, self.X)
@@ -42,7 +42,7 @@ class KNN():
             for i in range(len(distances)):
                 if i not in important_indices:
                     if distances[i] < minimum:
-                        minimum = distances
+                        minimum = distances[i]
                         minIndex = i
             important_indices.append(minIndex)
             minimum=super_large_number
@@ -52,9 +52,23 @@ class KNN():
         for i in range(len(important_indices)):
             value_list.append(self.Y[important_indices[i]])
 
+        min = super_large_number
+        minIndex = -1
         if (self.task == "Classification"):
             mode = util.mode(value_list)
-            return mode
+            if len(mode) > 1:
+                not_done = True
+                while not_done:
+                    for i in range(len(important_indices)):
+                        if distances[important_indices[i]] < min:
+                            min = distances[important_indices[i]]
+                            minIndex = important_indices[i]
+                    if self.Y[minIndex] in mode:
+                        not_done = False
+                        return self.Y[minIndex]
+                    else:
+                        distances[minIndex] = super_large_number
+            return mode[0]
         elif (self.task == "Regression"):
             unweighted_avg = sum(value_list) / len(value_list)
             return unweighted_avg
@@ -62,10 +76,9 @@ class KNN():
             print("Self.task is not a valid task type. Please input Classification or Regression")
     
 
-
 if __name__ == '__main__':
 
-    x = np.array([[1,2,3], [2,0,1], [4,4,2], [3,2,0], [1,5,1]]) 
+    x = np.array([[1,2,3], [2,0,1], [4,4,2], [3,2,0], [1,5,1]])
     y_labels = np.array(['A', 'C', 'B', 'A', 'B'])
     y_values = np.array([3, 5, -1, 2, 0])
 
@@ -82,4 +95,3 @@ if __name__ == '__main__':
     my_KNN_regression = KNN("Regression", 3)
     my_KNN_regression.fit(x, y_values)
     print("Regression Prediction Example: ", my_KNN_regression.predict([2, 2, 4]))
-
