@@ -24,7 +24,6 @@ def mse(pred:np.array, true:np.array) -> float:
     return float(round(subsum/len(pred),2))
 
 
-
 def accuracy(pred:np.array, true:np.array) -> float:
     """
     Input:
@@ -79,7 +78,6 @@ def precision(pred:np.array, true:np.array) -> float:
 
 def recall(pred:np.array, true:np.array) -> float:
     """
-
     Input:
         pred: numpy array of predicted labels
         true: numpy array of true labels
@@ -158,9 +156,6 @@ def fscore(pred, true, f_val):
 
 
     return round(subsum/len(dist_list), 2)
-
-
-
 
 def euclidean_distance(point: np.array, data: np.array) -> np.array:
     """ Calculates the euclidean distance for a point against all the data.
